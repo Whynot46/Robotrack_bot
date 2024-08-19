@@ -2,10 +2,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, KeyboardBu
 
 
 main_keyboard = ReplyKeyboardMarkup(keyboard=[
-    [KeyboardButton(text='Main_keyboard')]],
+    [KeyboardButton(text="Расписание")],
+    [KeyboardButton(text="Записаться на занятие")],
+    [KeyboardButton(text="О нас")]],
     resize_keyboard=True)
-
-
-download_keyboard = track_keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="download_keyboard", callback_data=f"was_download")]
-    ])
