@@ -1,13 +1,10 @@
-# Aiogram_bot_example
-Пример проекта telegram-бота на Aiogram 3.5
+# Robotrack_aiogram_bot
+Telegram-бот для детского клуба робототехники Роботрек.
 <br>
-Все последующие проекты должны быть выполнены с использованием представленной архитектуры.
+<i>Находится в стадии разработки!<i/>
 <br>
-Оформление README.md согласно данному примеру.
-<br>
-P.S. Никита, если сможешь улучшить README к подобным проектам, буду весьма признателен!
 
-[Видео, демонстрирующее функционал бота]
+https://github.com/user-attachments/assets/0e01ba85-2c18-46b2-b39a-81ece8e7538c
 
 ## Содержание
 - [Технологии](#технологии)
@@ -21,20 +18,22 @@ P.S. Никита, если сможешь улучшить README к подоб
 - [Aiogram 3.5](https://docs.aiogram.dev/en/dev-3.x/)
 - [SQLite 3](https://docs.python.org/3/library/sqlite3.html)
 ## Функционал
-- Функционал_1
-- Функционал_2
-- Функционал_3
+- Регистрация пользователей
+- Запись на занятие
+- Просмотр расписания
+- Панель администратора (Выгрузка БД, просмотр запией на занятия)
+- Остальное после обновления
 ## Использование
 Скачайте репозиторий:
 <br>
 <br>
 For Windows:
 ```
-git clone https://github.com/Quasar-development/Aiogram_bot_example
+git clone https://github.com/Whynot46/Robotrack_aiogram_bot
 ```
 For Linux:
 ```
-sudo git clone https://github.com/Quasar-development/Aiogram_bot_example
+sudo git clone https://github.com/Whynot46/Robotrack_aiogram_bot
 ```
 <hr>
 Установите необходимые библиотеки с помощью команды:
@@ -50,8 +49,6 @@ For Linux:
 pip3 install -r requirements.txt
 ```
 <hr>
-[Указать все необходимые действия для корректного запуска бота]
-<br>
 В файле  <i>./src/config.py </i> необходимо поменять API_TOKEN.
 <br>
 В файле  <i>./src/config.py </i> необходимо указать ID админов.
