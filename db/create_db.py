@@ -18,7 +18,8 @@ cursor.execute('''
         date TEXT NOT NULL,
         time TEXT NOT NULL,
         topic TEXT NOT NULL,
-        age TEXT NOT NULL
+        age TEXT NOT NULL,
+        student TEXT
         )
         ''')
 
