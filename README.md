@@ -1,4 +1,4 @@
-# Robotrack_aiogram_bot
+# Robotrack_bot
 Telegram-бот для детского клуба робототехники Роботрек.
 <br>
 <i>Находится в стадии разработки!<i/>
