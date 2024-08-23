@@ -7,6 +7,7 @@ from aiogram.fsm.context import FSMContext
 import src.keyboards as kb
 import src.db as db
 import src.config as config
+import datetime
 import re
 
 
@@ -47,18 +48,18 @@ async def start_loop(message: Message, bot: Bot, state = FSMContext):
 async def put_name(message: Message, state = FSMContext):
     await state.update_data(child_name = message.text)
     await state.set_state(User_data.child_age)
-    await message.answer("Сколько Вашему ребёнку полных лет?")
+    await message.answer("Укажите дату рождения Вашего ребёнка\nФормат: ДД.ММ.ГГГГ")
 
 
 @router.message(User_data.child_age)
-async def put_age(message: Message, state = FSMContext):
-    if message.text.isdigit():
+async def put_birthdate(message: Message, state = FSMContext):
+    if config.check_date(message.text):
         await state.update_data(child_age = message.text)
         await state.set_state(User_data.parent_number)
         await message.answer("Укажите контактный номер родителя")
     else:
         await state.set_state(User_data.child_age)
-        await message.answer("😮Пожалуйста, введите возраст в цифрах")
+        await message.answer("😮Пожалуйста, введите дату рождения, согласно формату")
 
 
 @router.message(User_data.parent_number)
@@ -83,7 +84,21 @@ async def open_admin_panel(message: Message, bot: Bot, state = FSMContext):
 
 @router.message(F.text == "🧑🏻‍💻Мой профиль")  
 async def get_user_profile(message: Message, bot: Bot):  
-    await message.answer("Здесь будет Ваш профиль!")
+    await message.answer(f"Профиль пользователя @{db.get_username(message.from_user.id)}\n"
+                        f"ФИО ребёнка: {db.get_child_name(message.from_user.id)}\n"
+                        f"ДР ребёнка: {db.get_child_birthday(message.from_user.id)} ({config.calculate_age(db.get_child_birthday(message.from_user.id))} лет)\n"
+                        f"Номер родителя: {db.get_parent_number(message.from_user.id)}"
+                        , reply_markup=kb.user_keyboard)
+
+
+@router.message(F.text == "◀️Главное меню")  
+async def get_shedule(message: Message, bot: Bot):  
+    await message.answer("🏠Главное меню", reply_markup = kb.main_keyboard)
+
+
+@router.message(F.text == "🙋🏻‍♂️Мои занятия")  
+async def get_shedule(message: Message, bot: Bot):  
+    await message.answer("Здесь будет список Ваших занятий", reply_markup = kb.main_keyboard)
 
 
 @router.message(F.text == "🗓Расписание")  
@@ -97,7 +112,13 @@ async def get_shedule(message: Message, bot: Bot, state = FSMContext):
                         "Наш адрес - ул. Савушкина, 4, корп. 6 (офис 307, этаж 3)\n"
                         "Режим работы - Вт-Вс 10:00–20:00\n"
                         "TG - https://t.me/s/robotrackast\n"
-                        "VK - https://vk.com/robotrackast\n")
+                        "VK - https://vk.com/robotrackast\n"
+                        , reply_markup=kb.about_us_keyboard)
+
+
+@router.message(F.text == "🧑🏻‍🏫Наши преподаватели")  
+async def get_shedule(message: Message, bot: Bot):  
+    await message.answer("Здесь будет список наших преподавателей", reply_markup = kb.main_keyboard)
 
 
 @router.message(F.text == "🙋🏻‍♂️Записаться на занятие")  
@@ -109,7 +130,7 @@ async def sign_up(message: Message, bot: Bot, state = FSMContext):
 @router.message(Lesson_record.period)
 async def put_period(message: Message, state = FSMContext):
     if message.text != "❌Отмена":
-        if message.text == "Единожды🤓" or message.text == "Регулярно😎":
+        if message.text == "Записаться на пробное занятие🤓" or message.text == "Записаться на постоянное посещение😎":
             await state.update_data(period = message.text)
             await state.set_state(Lesson_record.week)
             await message.answer("Какая неделя Вас интересует?", reply_markup=kb.get_week_keyboard())
@@ -150,8 +171,18 @@ async def put_weekday(message: Message, state = FSMContext):
 async def put_lesson(message: Message, state = FSMContext):
     if message.text != "❌Отмена":
         await state.update_data(lesson = message.text)
-        data = await state.get_data()   
-        await message.answer(f"✅Вы записаны на урок\n{data['weekday']}\n{data['lesson']}", reply_markup=kb.main_keyboard)
+        data = await state.get_data()
+        weekday, date = (data['weekday']).split("\n")
+        topic, time = (data['lesson']).split("\n")
+        topic, age = topic.split(" ", maxsplit=1)
+        if db.sign_up_to_lesson(date, time, topic, age, message.from_user.id): 
+            await message.answer(f"✅Вы записаны на урок\n"
+                                f"{topic} {time}\n"
+                                f"{weekday} {date}", reply_markup=kb.main_keyboard)
+        elif db.sign_up_to_lesson(date, time, topic, age, message.from_user.id) == False:
+            await message.answer(f"😔К сожалению, на этом занятии нет свободен\nПопробуйте записаться на другой день", reply_markup=kb.admin_keyboard)
+        elif db.sign_up_to_lesson(date, time, topic, age, message.from_user.id) == None:
+            await message.answer("🙋🏻‍♂️Вы уже записаны на этот урок", reply_markup=kb.main_keyboard)
     else:
         await state.clear()
         await message.answer("❌Запись отменена", reply_markup=kb.main_keyboard)

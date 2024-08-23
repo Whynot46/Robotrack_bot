@@ -8,7 +8,7 @@ cursor.execute('''
         user_id INTEGER PRIMARY KEY,
         username TEXT NOT NULL,
         child_name TEXT NOT NULL,
-        child_age INTEGER NOT NULL,
+        child_birthday INTEGER NOT NULL,
         parent_number TEXT NOT NULL
         )
         ''')

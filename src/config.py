@@ -6,9 +6,25 @@ API_TOKEN = "7083391110:AAHXU4X4h2U-FuHm0vmJfy3mTQoBAiD_HKk"
 ADMIN_ID = ("1071349364")
 
 
-def get_today():
+def get_today() -> datetime:
     datetime_obj = datetime.datetime.today()
     return datetime_obj.strftime("%d.%m.%Y")
+
+
+def check_date(date : str) -> bool:
+    try:
+        datetime_obj = datetime.datetime.strptime(date, "%d.%m.%Y")
+        return True
+    except Exception as error:
+        print(error)
+        return False
+
+
+def calculate_age(birth_date : str) -> int:
+    birth_date = datetime.datetime.strptime(birth_date, "%d.%m.%Y")
+    today = datetime.datetime.today()
+    age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+    return age
 
 
 def switch_to_next_week(day : str) -> str:
@@ -27,7 +43,6 @@ def get_weekday(day : str) -> str:
     weekday = datetime_obj.weekday()
     return f"{week[weekday]}\n{datetime_obj.strftime('%d.%m.%Y')}"
     
-
 
 # def get_weekday_list(week : list) -> list:
 #     weekday_list = []

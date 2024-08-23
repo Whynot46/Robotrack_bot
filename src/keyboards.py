@@ -12,14 +12,26 @@ main_keyboard = ReplyKeyboardMarkup(keyboard=[
 
 
 period_keyboard = ReplyKeyboardMarkup(keyboard=[
-    [KeyboardButton(text="Единожды🤓")],
-    [KeyboardButton(text="Регулярно😎")]],
+    [KeyboardButton(text="Записаться на пробное занятие🤓")],
+    [KeyboardButton(text="Записаться на постоянное посещение😎")]],
     resize_keyboard=True)
 
 
 admin_keyboard = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text="Просмотр расписания")],
     [KeyboardButton(text="Выгрузить базу данных")]],
+    resize_keyboard=True)
+
+
+user_keyboard = ReplyKeyboardMarkup(keyboard=[
+    [KeyboardButton(text="🙋🏻‍♂️Мои занятия")],
+    [KeyboardButton(text="◀️Главное меню")]],
+    resize_keyboard=True)
+
+
+about_us_keyboard = ReplyKeyboardMarkup(keyboard=[
+    [KeyboardButton(text="🧑🏻‍🏫Наши преподаватели")],
+    [KeyboardButton(text="◀️Главное меню")]],
     resize_keyboard=True)
 
 
