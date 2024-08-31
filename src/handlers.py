@@ -79,7 +79,7 @@ async def put_parent_number(message: Message, state = FSMContext):
 @router.message(Command("admin"))
 async def open_admin_panel(message: Message, bot: Bot, state = FSMContext):
     if str(message.from_user.id) in config.ADMIN_ID:
-        await message.answer("🛠Панель администратора")
+        await message.answer("🛠Панель администратора", reply_markup=kb.admin_keyboard)
 
 
 @router.message(F.text == "🧑🏻‍💻Мой профиль")  
