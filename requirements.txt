@@ -6,11 +6,13 @@ annotated-types==0.7.0
 async-timeout==4.0.3
 attrs==23.2.0
 certifi==2024.6.2
+et-xmlfile==1.1.0
 frozenlist==1.4.1
 idna==3.7
 magic-filter==1.0.12
 multidict==6.0.5
 numpy==1.26.4
+openpyxl==3.1.5
 pandas==2.2.2
 pydantic==2.7.3
 pydantic_core==2.18.4

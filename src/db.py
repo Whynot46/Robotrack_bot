@@ -69,14 +69,14 @@ def get_parent_number(user_id):
     return result[0] if result else None
 
 
-def get_lesson(date, time, topic, age):
-    connection = sql.connect(DB_PATH)
-    cursor = connection.cursor()
-    cursor.execute('''
-    SELECT * FROM Users WHERE date = ? AND time = ? AND topic = ? AND age = ?
-    ''', (date, time, topic, age))
-    result = cursor.fetchone()
-    connection.commit()
+# def get_user_lesson(date, time, topic, age):
+#     connection = sql.connect(DB_PATH)
+#     cursor = connection.cursor()
+#     cursor.execute('''
+#     SELECT * FROM Users WHERE date = ? AND time = ? AND topic = ? AND age = ?
+#     ''', (date, time, topic, age))
+#     result = cursor.fetchone()
+#     connection.commit()
     
 
 #True - запись прошла успешно | False - нет места | None - уже записан
@@ -120,7 +120,7 @@ def sign_up_to_lesson(date : str, time : str, topic : str, age : str, student_id
 
 def get_users_data():
     connection = sql.connect(DB_PATH) 
-    xlsx_file = pd.read_sql_query('SELECT user_id, username, child_name, child_age, parent_number FROM User', connection) 
+    xlsx_file = pd.read_sql_query('SELECT user_id, username, child_name, child_birthday, parent_number FROM Users', connection) 
     xlsx_file.to_excel("./db/users_data.xlsx", index=False)  
     connection.close() 
 
@@ -134,7 +134,7 @@ def get_lessons_data():
 
 def get_shedule_data():
     connection = sql.connect(DB_PATH) 
-    xlsx_file = pd.read_sql_query('SELECT date, weekday, lessons FROM Shedule', connection) 
+    xlsx_file = pd.read_sql_query('SELECT weekday, lessons FROM Shedule', connection) 
     xlsx_file.to_excel("./db/shedule_data.xlsx", index=False)  
     connection.close() 
 
@@ -149,3 +149,18 @@ def get_lessons(weekday : str) -> list: # list of tuple
     lessons = ast.literal_eval(results)
 
     return lessons
+
+
+def get_lesson_children(date : str, time : str, topic : str, age : str) -> list: # list of str (ФИО)
+    connection = sql.connect(DB_PATH)
+    cursor = connection.cursor()
+    try:
+        cursor.execute("SELECT student FROM Lessons WHERE date = ? AND time = ? AND topic = ? AND age = ?", (date, time, topic, age))
+        students = (cursor.fetchone())[0]
+        students = ast.literal_eval(students)
+        return students
+    except:
+        return []
+
+
+# print((get_lesson_children("23.08.2024", "10:00-11:40", "Робототехника", "7-9 лет")))

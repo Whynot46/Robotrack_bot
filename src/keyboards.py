@@ -5,29 +5,29 @@ import src.db as db
 
 main_keyboard = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text="🧑🏻‍💻Мой профиль")],
-    [KeyboardButton(text="🗓Расписание")],
+    [KeyboardButton(text="📅Расписание")],
     [KeyboardButton(text="🙋🏻‍♂️Записаться на занятие")],
     [KeyboardButton(text="🏠О нас")]],
     resize_keyboard=True)
 
 
 admin_keyboard = ReplyKeyboardMarkup(keyboard=[
-    [KeyboardButton(text="🗓Расписание")],
+    [KeyboardButton(text="📋Занятия")],
     [KeyboardButton(text="🙋🏻⬇️Выгрузить БД")],
     [KeyboardButton(text="◀️Главное меню")]],
     resize_keyboard=True)
+
+
+db_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="🙋🏻Пользователи", callback_data="users_data")],
+    [InlineKeyboardButton(text="🪧Расписание", callback_data="shedule_data")],
+    [InlineKeyboardButton(text="📋Занятия", callback_data="lessons_data")]])
 
 
 period_keyboard = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text="Записаться на пробное занятие🤓")],
     [KeyboardButton(text="Записаться на постоянное посещение😎")],
     [KeyboardButton(text="◀️Главное меню")],],
-    resize_keyboard=True)
-
-
-admin_keyboard = ReplyKeyboardMarkup(keyboard=[
-    [KeyboardButton(text="Просмотр расписания")],
-    [KeyboardButton(text="Выгрузить базу данных")]],
     resize_keyboard=True)
 
 

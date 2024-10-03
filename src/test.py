@@ -45,14 +45,15 @@
 
 # print(sign_up_to_lesson("16.11.2024", "10:00-11:40", "Робототехника", "4-6 лет", "1071349364"))
 
-from datetime import datetime
+# from datetime import datetime
 
-def calculate_age(birth_date : str) -> int:
-    birth_date = datetime.strptime(birth_date_str, "%d.%m.%Y")
-    today = datetime.today()
-    age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-    return age
+# def calculate_age(birth_date : str) -> int:
+#     birth_date = datetime.strptime(birth_date_str, "%d.%m.%Y")
+#     today = datetime.today()
+#     age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+#     return age
 
-birth_date_str = "28.11.2004"
-age = calculate_age(birth_date_str)
-print(f"Age: {age}")
+# birth_date_str = "28.11.2004"
+# age = calculate_age(birth_date_str)
+# print(f"Age: {age}")
+

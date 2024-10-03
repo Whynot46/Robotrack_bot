@@ -21,19 +21,18 @@ class User_data(StatesGroup):
 
 
 class Lesson_record(StatesGroup):
-    period = State()
     week = State()
     weekday = State()
     lesson = State()
 
 
 @router.message(Command("start"))
-async def start_loop(message: Message, bot: Bot, state = FSMContext):
+async def start_loop(message: Message, state = FSMContext):
     await message.answer("Привет! Я бот из Роботрека🤖\n"
-                "Хочешь просмотреть расписание?\n"
-                "Хочешь записаться на занятие?\n"
-                "Хочешь связаться с преподавателем?\n"
-                "На эти и многие другие вопросы я смогу ответить тебе здесь!")
+                "Хочешь просмотреть расписание?📅\n"
+                "Хочешь записаться на занятие?✍🏻\n"
+                "Хочешь связаться с преподавателем?📱\n"
+                "На эти и многие другие вопросы я смогу ответить тебе здесь!😄")
 
     if not db.is_old(message.from_user.id):
         await state.set_state(User_data.child_name)
@@ -77,13 +76,13 @@ async def put_parent_number(message: Message, state = FSMContext):
 
 
 @router.message(Command("admin"))
-async def open_admin_panel(message: Message, bot: Bot, state = FSMContext):
+async def open_admin_panel(message: Message):
     if str(message.from_user.id) in config.ADMIN_ID:
         await message.answer("🛠Панель администратора", reply_markup=kb.admin_keyboard)
 
 
 @router.message(F.text == "🧑🏻‍💻Мой профиль")  
-async def get_user_profile(message: Message, bot: Bot):  
+async def get_user_profile(message: Message):  
     await message.answer(f"Профиль пользователя @{db.get_username(message.from_user.id)}\n"
                         f"ФИО ребёнка: {db.get_child_name(message.from_user.id)}\n"
                         f"ДР ребёнка: {db.get_child_birthday(message.from_user.id)} ({config.calculate_age(db.get_child_birthday(message.from_user.id))} лет)\n"
@@ -92,22 +91,22 @@ async def get_user_profile(message: Message, bot: Bot):
 
 
 @router.message(F.text == "◀️Главное меню")  
-async def get_shedule(message: Message, bot: Bot):  
+async def get_shedule(message: Message):  
     await message.answer("🏠Главное меню", reply_markup = kb.main_keyboard)
 
 
 @router.message(F.text == "🙋🏻‍♂️Мои занятия")  
-async def get_shedule(message: Message, bot: Bot):  
+async def get_shedule(message: Message):  
     await message.answer("Здесь будет список Ваших занятий", reply_markup = kb.main_keyboard)
 
 
-@router.message(F.text == "🗓Расписание")  
-async def get_shedule(message: Message, bot: Bot):  
+@router.message(F.text == "📅Расписание")  
+async def get_shedule(message: Message): 
     await message.answer_photo(caption=f"Расписание на 2024/2025 год", photo=FSInputFile("./img/shedule_2024-2025.png"), reply_markup=kb.main_keyboard)
 
 
 @router.message(F.text == "🏠О нас")  
-async def get_shedule(message: Message, bot: Bot, state = FSMContext):  
+async def get_shedule(message: Message):  
     await message.answer("Детский клуб робототехники Роботрек\n"
                         "Наш адрес - ул. Савушкина, 4, корп. 6 (офис 307, этаж 3)\n"
                         "Режим работы - Вт-Вс 10:00–20:00\n"
@@ -117,29 +116,14 @@ async def get_shedule(message: Message, bot: Bot, state = FSMContext):
 
 
 @router.message(F.text == "🧑🏻‍🏫Наши преподаватели")  
-async def get_shedule(message: Message, bot: Bot):  
+async def get_shedule(message: Message):  
     await message.answer("Здесь будет список наших преподавателей", reply_markup = kb.main_keyboard)
 
 
 @router.message(F.text == "🙋🏻‍♂️Записаться на занятие")  
-async def sign_up(message: Message, bot: Bot, state = FSMContext):
-    await state.set_state(Lesson_record.period)
-    await message.answer("Как часто вы собираетесь посещать занятие?", reply_markup = kb.period_keyboard)
-
-
-@router.message(Lesson_record.period)
-async def put_period(message: Message, state = FSMContext):
-    if message.text != "❌Отмена":
-        if message.text == "Записаться на пробное занятие🤓" or message.text == "Записаться на постоянное посещение😎":
-            await state.update_data(period = message.text)
-            await state.set_state(Lesson_record.week)
-            await message.answer("Какая неделя Вас интересует?", reply_markup=kb.get_week_keyboard())
-        else:
-            await state.set_state(Lesson_record.period)
-            await message.answer("😮Пожалуйста, выберите частоту посещения занятия из предложенного списка")
-    else:
-        await state.clear()
-        await message.answer("❌Запись отменена", reply_markup=kb.main_keyboard)
+async def sign_up(message: Message, state = FSMContext):
+    await state.set_state(Lesson_record.week)
+    await message.answer("Какая неделя Вас интересует?", reply_markup=kb.get_week_keyboard())
 
 
 @router.message(Lesson_record.week)
@@ -170,19 +154,66 @@ async def put_weekday(message: Message, state = FSMContext):
 @router.message(Lesson_record.lesson)
 async def put_lesson(message: Message, state = FSMContext):
     if message.text != "❌Отмена":
+        
         await state.update_data(lesson = message.text)
         data = await state.get_data()
         weekday, date = (data['weekday']).split("\n")
         topic, time = (data['lesson']).split("\n")
         topic, age = topic.split(" ", maxsplit=1)
-        if db.sign_up_to_lesson(date, time, topic, age, message.from_user.id): 
-            await message.answer(f"✅Вы записаны на урок\n"
-                                f"{topic} {time}\n"
-                                f"{weekday} {date}", reply_markup=kb.main_keyboard)
-        elif db.sign_up_to_lesson(date, time, topic, age, message.from_user.id) == False:
-            await message.answer(f"😔К сожалению, на этом занятии нет свободен\nПопробуйте записаться на другой день", reply_markup=kb.admin_keyboard)
-        elif db.sign_up_to_lesson(date, time, topic, age, message.from_user.id) == None:
-            await message.answer("🙋🏻‍♂️Вы уже записаны на этот урок", reply_markup=kb.main_keyboard)
+
+        if str(message.from_user.id) in config.ADMIN_ID:
+            students = db.get_lesson_children(date, time, topic, age)
+            if len(students)>0:
+                students_str = '\n'.join(students)
+                await message.answer(f"{topic} {time}\n"
+                                    f"{weekday} {date}\n\n"
+                                    f"{students_str}", reply_markup=kb.admin_keyboard)
+            else:
+                await message.answer("На это занятие ещё никто не записался😭", reply_markup=kb.admin_keyboard)
+
+        else:
+            if db.sign_up_to_lesson(date, time, topic, age, message.from_user.id): 
+                await message.answer(f"✅Вы записаны на урок\n"
+                                    f"{topic} {time}\n"
+                                    f"{weekday} {date}", reply_markup=kb.main_keyboard)
+            elif db.sign_up_to_lesson(date, time, topic, age, message.from_user.id) == False:
+                await message.answer(f"😔К сожалению, на этом занятии нет свободен\nПопробуйте записаться на другой день", reply_markup=kb.admin_keyboard)
+            elif db.sign_up_to_lesson(date, time, topic, age, message.from_user.id) == None:
+                await message.answer("🙋🏻‍♂️Вы уже записаны на этот урок", reply_markup=kb.main_keyboard)
     else:
         await state.clear()
-        await message.answer("❌Запись отменена", reply_markup=kb.main_keyboard)
+        if str(message.from_user.id) in config.ADMIN_ID:
+            await message.answer("🛠Панель администратора", reply_markup=kb.admin_keyboard)
+        else:
+            await message.answer("❌Запись отменена", reply_markup=kb.main_keyboard)
+
+
+@router.message(F.text == "📋Занятия")  
+async def open_admin_panel(message: Message, state = FSMContext):
+    if str(message.from_user.id) in config.ADMIN_ID:
+        await state.set_state(Lesson_record.week)
+        await message.answer("Какая неделя Вас интересует?", reply_markup=kb.get_week_keyboard())
+
+
+@router.message(F.text == "🙋🏻⬇️Выгрузить БД")  
+async def open_admin_panel(message: Message):
+    if str(message.from_user.id) in config.ADMIN_ID:
+        await message.answer("Какую таблицу хотите выгрузить?", reply_markup = kb.db_keyboard)
+        
+
+@router.callback_query(F.data == "users_data")
+async def send_random_value(callback: CallbackQuery):
+    db.get_users_data()
+    await callback.message.answer_document(FSInputFile("./db/users_data.xlsx"))
+    
+
+@router.callback_query(F.data == "shedule_data")
+async def send_random_value(callback: CallbackQuery):
+    db.get_shedule_data()
+    await callback.message.answer_document(FSInputFile("./db/shedule_data.xlsx"))
+
+
+@router.callback_query(F.data == "lessons_data")
+async def send_random_value(callback: CallbackQuery):
+    db.get_lessons_data()
+    await callback.message.answer_document(FSInputFile("./db/lessons_data.xlsx"))
