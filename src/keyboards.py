@@ -20,7 +20,7 @@ admin_keyboard = ReplyKeyboardMarkup(keyboard=[
 
 period_keyboard = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text="Записаться на пробное занятие🤓")],
-    [KeyboardButton(text="Записаться на постоянное посещение😎")]
+    [KeyboardButton(text="Записаться на постоянное посещение😎")],
     [KeyboardButton(text="◀️Главное меню")],],
     resize_keyboard=True)
 
