@@ -57,3 +57,11 @@
 # age = calculate_age(birth_date_str)
 # print(f"Age: {age}")
 
+text = "Робототехника 4-6 лет 16:20-18:00\nПятница 04.10.2024\n\nФамилия Имя Отчество"
+
+lesson, children_str = text.split("\n\n", 1)
+part_1, part_2 = lesson.split("\n")
+topic_age, time = part_1.rsplit(" ", 1)
+topic, age = topic_age.split(" ", 1)
+weekday, date = part_2.split(" ", 1)
+print(date, time, topic, age)

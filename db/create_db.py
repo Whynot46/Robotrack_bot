@@ -30,5 +30,12 @@ cursor.execute('''
         )
         ''')
 
+cursor.execute(''' 
+        CREATE TABLE IF NOT EXISTS Admins (
+        id INTEGER NOT NULL,
+        username TEXT NOT NULL
+        )
+        ''')
+
 connection.commit()
 connection.close()

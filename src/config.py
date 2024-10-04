@@ -3,7 +3,6 @@ import datetime
 
 DB_PATH = "./db/Data.db"
 API_TOKEN = "7083391110:AAHXU4X4h2U-FuHm0vmJfy3mTQoBAiD_HKk"
-ADMIN_ID = ("1071349364")
 
 
 def get_today() -> datetime:
